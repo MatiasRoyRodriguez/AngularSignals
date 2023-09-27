@@ -1,11 +1,13 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, OnDestroy, computed, effect, signal } from '@angular/core';
 import { User } from '../../interfaces/user-request.interface';
 
 @Component({
   templateUrl: './properties-page.component.html',
   styleUrls: ['./properties-page.component.css']
 })
-export class PropertiesPageComponent {
+export class PropertiesPageComponent implements OnDestroy {
+
+  public counter = signal(10);
 
   public user = signal<User>({
     id: 1,
@@ -16,6 +18,22 @@ export class PropertiesPageComponent {
   });
 
   public fullName = computed(() => `${this.user().first_name} ${this.user().last_name}`)
+
+  public userChangedEffect = effect(() => {
+
+    console.log('userchanged');
+    console.log(this.user().first_name);
+    console.log(this.counter());
+
+  });
+
+  ngOnDestroy(): void {
+    // this.userChangedEffect.destroy();
+  }
+
+  increaseBy(value: number) {
+    this.counter.update(current => current + value);
+  }
 
   onFieldUpdated(field: keyof User, value: string) {
     // this.user.set({
